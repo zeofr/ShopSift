@@ -79,7 +79,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Icon(
                     Icons.lightbulb_outline,
                     color: Colors.white,
-                    size: screenWidth * 0.06, // 6% of screen width for icon size
+                    size: screenWidth * 0.03, // 6% of screen width for icon size
                   ),
 
                 )
@@ -115,18 +115,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 SizedBox(width: screenWidth * 0.03), // 3% of screen width for spacing
-                Container(
-                  padding: EdgeInsets.all(screenWidth * 0.03), // 3% of screen width for padding
-                  decoration: BoxDecoration(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.circular(screenWidth * 0.04), // 4% of screen width for border radius
-                  ),
-                  child: Icon(
-                    Icons.lightbulb_outline,
-                    color: Colors.white,
-                    size: screenWidth * 0.06, // 6% of screen width for icon size
-                  ),
-                ),
+                OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.inversePrimary,
+              side: BorderSide(color: Theme.of(context).colorScheme.inversePrimary), // Border color
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+            ),
+            //onPressed: () => _//performSearch(context),
+            onPressed: () { print('pressed search button'); },
+            child: Icon(
+              Icons.search,
+              size: 24.0,
+            ),
+          ),
+
               ],
             ),
           ],
@@ -138,3 +142,43 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(height*3);
 }
+
+
+
+
+//search bar code:
+//
+//     return Container(
+//       padding: EdgeInsets.all(16.0),
+//       child: Row(
+//         children: [
+//           Expanded(
+//             child: TextField(
+//               controller: _searchController,
+//               decoration: InputDecoration(
+//                 hintText: 'Search...',
+//                 border: OutlineInputBorder(),
+//                 contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+//               ),
+//             ),
+//           ),
+//           SizedBox(width: 8.0),
+//           OutlinedButton(
+//             style: OutlinedButton.styleFrom(
+//               primary: buttonColor, // Text color
+//               side: BorderSide(color: buttonColor), // Border color
+//               shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(12.0),
+//               ),
+//             ),
+//             onPressed: () => _performSearch(context),
+//             child: Icon(
+//               Icons.search,
+//               size: 24.0,
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
