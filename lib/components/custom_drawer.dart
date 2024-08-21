@@ -10,6 +10,7 @@ class CustomDrawer extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Drawer(
+      width: screenWidth*.6,
       child: Stack(
         children: [
           // Blurred background

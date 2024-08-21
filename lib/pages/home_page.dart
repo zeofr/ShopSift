@@ -30,8 +30,8 @@ class HomePage extends StatelessWidget {
       // home: Scaffold
       // (
         backgroundColor: Theme.of(context).colorScheme.surface,
-        appBar: CustomAppBar()//onThemeSwitch:(){ Provider.of<ThemeProvider>(context,listen: false).toggleTheme();}),
-        ,endDrawer: CustomDrawer(),
+        appBar: CustomAppBar(),//onThemeSwitch:(){ Provider.of<ThemeProvider>(context,listen: false).toggleTheme();}),
+        endDrawer: CustomDrawer(),
         bottomNavigationBar: CustomBottomNavBar(centerText: 'Catalogue'),
 
         body:Padding(

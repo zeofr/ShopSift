@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 
 //importing components dart files:
@@ -21,7 +22,8 @@ import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure binding is initialized
-  await Hive.initFlutter();
+  final appDocumentDirectory =await  path_provider.getApplicationDocumentsDirectory;
+  await Hive.initFlutter();  
   await Hive.openBox('shopping_cart');
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,  // Restrict to portrait mode only
@@ -37,19 +39,29 @@ Future<void> main() async {
 }
 
 
-class MyApp extends StatelessWidget 
+class MyApp extends StatefulWidget 
 {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Catalogue App',
-      initialRoute: '/',
+      //initialRoute: '/',
       theme:Provider.of<ThemeProvider>(context).themeData,
       routes: {
-        '/': (context) => HomePage(),
+        '/homepage': (context) => HomePage(),
+
+
+
+
+
         '/shoppage': (context) => ShoppingPage(),
         '/settings': (context) => SettingsPage(),
         '/account_details': (context) => AccountDetailsPage(),
@@ -59,7 +71,31 @@ class MyApp extends StatelessWidget
         // '/aboutus': (context) => AboutUsPage(),
         // '/intro': (context) => IntroPage(),
         
-      } 
+      }, 
+      home:FutureBuilder(
+        future: Hive.openBox('products'),
+        builder: (BuildContext context,AsyncSnapshot snapshot)
+        {
+          if(snapshot.connectionState == ConnectionState.done)
+          {
+            if(snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            else {
+              return HomePage();
+            }
+          }
+          else{
+            return Scaffold();
+          }
+        }
+        )
     );
   }
+  @override
+  void dispose(){
+    super.dispose();
+    Hive.close();
+  }
+  
 }
