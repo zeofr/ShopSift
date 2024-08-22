@@ -3,27 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:shopsift/models/product.dart';
 
 
 //importing components dart files:
 
 //importing pages:
 import 'package:shopsift/pages/home_page.dart';
-import 'package:shopsift/pages/shopping_page.dart';
+//simport 'package:shopsift/pages/shopping_page.dart';
 import 'pages/account_details_page.dart';
+import 'pages/admin_page.dart';
 import 'pages/settings_page.dart';
 
 //importing provider stuff
 import 'package:shopsift/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shopsift/models/boxes.dart';
 
 //importing firebase
 // import 'package:shopsift/firebase_options.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure binding is initialized
-  final appDocumentDirectory =await  path_provider.getApplicationDocumentsDirectory;
-  await Hive.initFlutter();  
+  WidgetsFlutterBinding.ensureInitialized();
+  final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
+  await Hive.initFlutter(); // Ensure binding is initialized
+  //final appDocumentDirectory =await  path_provider.getApplicationDocumentsDirectory;
+  //await Hive.initFlutter();  
+  Hive.registerAdapter(ProductAdapter());
+  var boxProducts = await Hive.openBox<Product>('productBox');
   await Hive.openBox('shopping_cart');
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,  // Restrict to portrait mode only
@@ -57,12 +64,12 @@ class _MyAppState extends State<MyApp> {
       theme:Provider.of<ThemeProvider>(context).themeData,
       routes: {
         '/homepage': (context) => HomePage(),
+        '/adminpage': (context) => AdminPage(),
 
 
 
 
-
-        '/shoppage': (context) => ShoppingPage(),
+        //'/shoppage': (context) => ShoppingPage(),
         '/settings': (context) => SettingsPage(),
         '/account_details': (context) => AccountDetailsPage(),
         // '/signup': (context) => SignUpPage(),

@@ -18,7 +18,7 @@ class CustomBottomNavBar extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.menu),
             onPressed: () {
-              Scaffold.of(context).openDrawer();
+              Navigator.pushReplacementNamed(context, '/menu');
             },
           ),
           // Center Text
@@ -31,7 +31,7 @@ class CustomBottomNavBar extends StatelessWidget {
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
               // Define action for cart button                onTap: () {
-                  Navigator.pushNamed(context, '/shoppage');
+                  Navigator.pushReplacementNamed(context, '/cartpage');
             },
           ),
         ],

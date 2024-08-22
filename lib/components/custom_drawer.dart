@@ -10,7 +10,7 @@ class CustomDrawer extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Drawer(
-      width: screenWidth*.6,
+      width: screenWidth*.8,
       child: Stack(
         children: [
           // Blurred background
@@ -54,6 +54,13 @@ class CustomDrawer extends StatelessWidget {
                 },
               ),
               Spacer(),
+              ListTile(
+                leading: Icon(Icons.admin_panel_settings_sharp, color: Theme.of(context).iconTheme.color),
+                title: Text('Admin', style: Theme.of(context).textTheme.bodyLarge),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/adminpage');
+                },
+              ),
               // Exit Button
               Padding(
                 padding: EdgeInsets.all(screenHeight * 0.02),

@@ -84,7 +84,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
                 )
                 ),
-                 SizedBox(width: screenWidth * 0.1), // 5% of screen width for spacing (Theme Button)
+                SizedBox(width: screenWidth * 0.1), // 1% of screen width for spacing (Theme Button)
                 // Icon(
                 //   Icons.more_vert,
                 //   color: Colors.white,
