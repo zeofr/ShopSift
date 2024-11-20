@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:shopsift/models/boxes.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:provider/provider.dart';
 
-import '../models/product.dart';
+import '../components/custom_appbar.dart';
+import '../components/custom_drawer.dart';
+import '../models/samaan.dart';
+import '../providers/samaan_provider.dart';
 
 class AdminPage extends StatefulWidget {
   @override
@@ -12,217 +14,166 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  @override
-  Widget build(BuildContext context) {
+  final TextEditingController naamController = TextEditingController();
+  final TextEditingController samaanIdController = TextEditingController();
+  final TextEditingController daamController = TextEditingController();
+  final TextEditingController soochnaController = TextEditingController();
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
 
-    final screenSize = MediaQuery.of(context).size;
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
 
+  void _clearDialogFields() {
+    naamController.clear();
+    samaanIdController.clear();
+    daamController.clear();
+    soochnaController.clear();
+    _image = null;
+  }
 
-    TextEditingController nameController = TextEditingController();
-    TextEditingController productIdController = TextEditingController();
-    TextEditingController priceController = TextEditingController();
-    TextEditingController descriptionController = TextEditingController();
-    // Getting the screen size for dynamic sizing
+  void _showAddSamaanDialog({int? index}) {
+    final samaanProvider = Provider.of<SamaanProvider>(context, listen: false);
 
+    if (index != null) {
+      final product = samaanProvider.samaanList[index];
+      naamController.text = product.naam;
+      samaanIdController.text = product.samaanId;
+      daamController.text = product.daam.toString();
+      soochnaController.text = product.soochna;
+      _image = File(product.imagePath);
+    } else {
+      _clearDialogFields();
+    }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'A D M I N',
-          style: TextStyle(
-            fontSize: screenSize.width * 0.05, // Adjust font size dynamically
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.inversePrimary
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: screenSize.width * 0.03),
-            child: ElevatedButton(
-              onPressed: () {
-                // Navigate to Shop once upload , editing or deletion is done
-                Navigator.of(context).pushReplacementNamed('/homepage');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(screenSize.width * 0.02), // Rounded corners
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(index == null ? 'Add Product' : 'Edit Product'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: naamController,
+                  decoration: InputDecoration(labelText: 'Name'),
                 ),
-                padding: EdgeInsets.symmetric(
-                  vertical: screenSize.height * 0.01,
-                  horizontal: screenSize.width * 0.05,
-                ), // Dynamic padding
-              ),
-              child: Text(
-                'Done',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: screenSize.width * 0.04, // Dynamic text size
+                TextField(
+                  controller: samaanIdController,
+                  decoration: InputDecoration(labelText: 'Product ID'),
                 ),
-              ),
+                TextField(
+                  controller: daamController,
+                  decoration: InputDecoration(labelText: 'Price'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: soochnaController,
+                  decoration: InputDecoration(labelText: 'Description'),
+                ),
+                SizedBox(height: 10),
+                _image == null
+                    ? Text('No image selected.')
+                    : Column(
+                        children: [
+                          Image.file(_image!, height: 100),
+                          Text('Image Selected'),
+                        ],
+                      ),
+                ElevatedButton(
+                    onPressed: _pickImage, child: Text('Pick Image')),
+              ],
             ),
           ),
-        ],
-        backgroundColor: Colors.transparent,
-      ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final samaan = Samaan(
+                  naam: naamController.text,
+                  samaanId: samaanIdController.text,
+                  daam: double.tryParse(daamController.text) ?? 0.0,
+                  soochna: soochnaController.text,
+                  imagePath: _image?.path ?? '',
+                );
+
+                if (index == null) {
+                  samaanProvider.addSamaan(samaan);
+                } else {
+                  samaanProvider.editSamaan(index, samaan);
+                }
+
+                _clearDialogFields(); // Clear fields after saving
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final samaanProvider = Provider.of<SamaanProvider>(context);
+
+    return Scaffold(
+      appBar: CustomAppBar(),
+      endDrawer: CustomDrawer(),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(screenSize.width * 0.05), // Dynamic padding
-          child: Column(
-            children: [
-              
-                  Container(
-                    height: screenSize.height * 0.4,
-                    decoration: BoxDecoration(
-                  
-                      color: Theme.of(context).colorScheme.primary, // Use the primary color from the theme
-                      borderRadius: BorderRadius.circular(16.0), // Rounded corners
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.secondary, // Border color from the theme
-                        width: 4.0,
-                      ),
-                    ),
-                    child:Padding(
-                      padding:EdgeInsets.all(screenSize.width * 0.05), 
-                      child:Container(
-                
-                  child:Column(
-                    
-                    children: <Widget>[
-
-                    //Text Field for entering name of product
-                    TextField(
-                      controller: nameController,
-                      decoration: InputDecoration(
-                        // contentPadding: EdgeInsets.all(screenSize.width * 0.05),
-                        border: OutlineInputBorder(),
-                        hintText : 'Product Name'
-                      )
-                    ),
-//SizedBox(height: screenSize.width * 0.015), 
-                    //Text Field for entering ProductId
-                    TextField(
-                      controller: productIdController,
-                      decoration: InputDecoration(
-                        // contentPadding: EdgeInsets.all(screenSize.width * 0.05),
-                        border: OutlineInputBorder(),
-                        hintText : 'Product Id'
-                      )
-                    ),
-//SizedBox(height: screenSize.width * 0.015), 
-                    //Text Field for entering price of product
-                    TextField(
-                      controller: priceController,
-                      keyboardType: TextInputType.number,
-                      decoration:  InputDecoration(
-                        // contentPadding: EdgeInsets.all(screenSize.width * 0.05),
-                        border: OutlineInputBorder(),
-                        hintText : 'Product Price'
-                      )
-                    ),
-//SizedBox(height: screenSize.width * 0.015), 
-                    //Text Field for entering description of the product
-                    TextField(
-                      controller: descriptionController,
-                      decoration: InputDecoration(
-                        // contentPadding: EdgeInsets.all(screenSize.width * 0.05),
-                        border: OutlineInputBorder(),
-                        hintText : 'Product Description'
-                      )
-                    ),
-//SizedBox(height: screenSize.width * 0.015), 
-                    //Button to add Image using image picker 
-
-
-
-//SizedBox(height: screenSize.width * 0.015), 
-                    //Add button to Submit the product details into the box
-                    TextButton(
-                      onPressed: (){
-                        setState(() {
-                          boxProducts.put(
-                            'key_${productIdController.text}',
-                            Product(
-                              name: nameController.text,
-                              productId: productIdController.text, 
-                              price: double.parse((double.tryParse(priceController.text) ?? 0.0).toStringAsFixed(2)),
-                              description: descriptionController.text, 
-                              //imagePath: imagePath.text,
-                          )
-                        );
-                      });
-                    },
-                      child: const Text('Add',style:TextStyle(color: Colors.green)),),
-                    
-
-
-//SizedBox(height: screenSize.width * 0.015), 
-                  ],
-
-                )
-                )
-                )
-                ),
-Expanded(
-  child: Padding(
-    padding: const EdgeInsets.all(5.0),
-    child: Card(
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        //TODO ListView.builder
-        child: ListView.builder(
-          itemCount: boxProducts.length, // Adjust this based on your data
-          itemBuilder: (context, index) {
-            // Fetch data for the current item
-            //TODO : .getAt
-            Product product = boxProducts.getAt(index); 
-
-            return Card(
-              margin: EdgeInsets.symmetric(vertical: 5.0),
-              child: ListTile(
-                // leading: Image.network(
-                //   product.imageUrl, // Assuming each product has an imageUrl property
-                //   width: 50, // Adjust width to your preference
-                //   height: 50, // Adjust height to your preference
-                //   fit: BoxFit.cover, // Ensure image fits within the bounds
-                // ),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(product.name, style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text('Product ID: ${product.productId}'),
-                    Text('Price: \$${product.price.toString()}'),
-                    Text('Description: ${product.description}'),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Perform edit action
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        // Perform delete action
-                      },
-                    ),
-                  ],
-                ),
-              ),
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: samaanProvider.samaanList.asMap().entries.map((entry) {
+            int index = entry.key;
+            Samaan product = entry.value;
+            return SamaanCard(
+              product: product,
+              onEdit: () => _showAddSamaanDialog(index: index),
+              onDelete: () => samaanProvider.deleteSamaan(index),
             );
-          },
+          }).toList(),
         ),
       ),
-    ),
-  ),
-)
-
-              
-            ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddSamaanDialog(),
+        child: Icon(Icons.add),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent, 
+        shape: CircularNotchedRectangle(), // Provides a notch for a floating action button
+        notchMargin: 8.0,
+        child: Container(
+          margin: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.width * 0.01,
+              horizontal: MediaQuery.of(context).size.width * 0.01),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.2),
+          ),
+          child: GestureDetector(
+            child: Container(
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
+              child: Text(
+                'Save',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+              ),
+            ),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/shoppage');
+            },
           ),
         ),
       ),
@@ -230,30 +181,104 @@ Expanded(
   }
 }
 
-// void main() {
-//   runApp(MaterialApp(
-//     theme: ThemeData(
-//       appBarTheme: AppBarTheme(
-//         backgroundColor: Colors.blueAccent, // Set your app bar color here
-//       ),
-//     ),
-//     home: AdminPage(),
-//     routes: {
-//       '/nextPage': (context) => NextPage(), // Define your route here
-//     },
-//   ));
-// }
+class SamaanCard extends StatelessWidget {
+  final Samaan product;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
-// class NextPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Next Page'),
-//       ),
-//       body: Center(
-//         child: Text('This is the next page.'),
-//       ),
-//     );
-//   }
-// }
+  SamaanCard({
+    required this.product,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.all(10),
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.7,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (product.imagePath.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Image.file(
+                          File(product.imagePath),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Icon(Icons.image_not_supported_outlined),
+                      ),
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.naam,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      Text(
+                        product.soochna,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '\$${product.daam}',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: onEdit,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: onDelete,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

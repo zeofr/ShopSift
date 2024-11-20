@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopsift/themes/theme.dart';
 
-
-
 class ThemeProvider with ChangeNotifier {
   ThemeData _themeData = lightMode;
 

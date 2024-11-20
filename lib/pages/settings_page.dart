@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../themes/theme_provider.dart';
+import '../providers/theme_provider.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -30,7 +30,7 @@ class SettingsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Z A I D',
+                      'ShopSift',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     Text('+91 XXXXXXXXXX'),

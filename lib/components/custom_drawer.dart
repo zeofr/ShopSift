@@ -15,9 +15,9 @@ class CustomDrawer extends StatelessWidget {
         children: [
           // Blurred background
           BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
             child: Container(
-              color: Colors.white.withOpacity(0.7), // Semi-transparent background
+              color: Colors.white.withOpacity(0.1), // Semi-transparent background
             ),
           ),
           Column(

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../themes/theme_provider.dart';
+import '../providers/theme_provider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;
@@ -16,7 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return AppBar(
-      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.inversePrimary ), // you can try Theme.of(context).colorTheme.color
+      iconTheme: IconThemeData(color: Theme.of(context).colorScheme.surface ), // you can try Theme.of(context).colorTheme.color
       backgroundColor: Colors.transparent,
       elevation: 0,
       flexibleSpace: Padding(
@@ -30,34 +30,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                  radius: screenWidth * 0.06, // 6% of screen width for avatar radius
-                  child: Icon(
-                    Icons.person,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: screenWidth * 0.06, // 6% of screen width for icon size
-                  ),
-                ),
-                SizedBox(width: screenWidth * 0.03), // 3% of screen width for spacing
-                // Text(
-                //   "Welcome to\nOptiFlex",
-                //   style: TextStyle(
+                // CircleAvatar(
+                //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                //   radius: screenWidth * 0.06, // 6% of screen width for avatar radius
+                //   child: Icon(
+                //     Icons.person,
                 //     color: Theme.of(context).colorScheme.primary,
-                //     fontSize: screenWidth * 0.045, // 4.5% of screen width for font size
+                //     size: screenWidth * 0.06, // 6% of screen width for icon size
                 //   ),
                 // ),
+                // SizedBox(width: screenWidth * 0.03), // 3% of screen width for spacing
+
                 Column(children:[
                                   Text(
                   "Welcome to",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                    color: Theme.of(context).colorScheme.primary,
                     fontSize: screenWidth * 0.035,
                   ),textAlign: TextAlign.left,),
                                   Text(
-                  "OptiFlex",
+                  "ShopSift",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                    color: Theme.of(context).colorScheme.primary,
                     fontSize: screenWidth * 0.055,
                     fontWeight: FontWeight.bold,
                   )),
@@ -85,11 +79,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 )
                 ),
                 SizedBox(width: screenWidth * 0.1), // 1% of screen width for spacing (Theme Button)
-                // Icon(
-                //   Icons.more_vert,
-                //   color: Colors.white,
-                //   size: screenWidth * 0.07, // 7% of screen width for icon size
-                // ),
               ],
             ),
             SizedBox(height: screenHeight * 0.03), // 3% of screen height for spacing
@@ -116,6 +105,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 SizedBox(width: screenWidth * 0.03), // 3% of screen width for spacing
                 OutlinedButton(
+                  
             style: OutlinedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.inversePrimary,
               side: BorderSide(color: Theme.of(context).colorScheme.inversePrimary), // Border color
@@ -124,7 +114,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             //onPressed: () => _//performSearch(context),
-            onPressed: () { print('pressed search button'); },
+             onPressed: () {print('Search button works');
+            //       Navigator.pushNamed(context, '/testshop');
+                 },
             child: Icon(
               Icons.search,
               size: 24.0,
@@ -142,43 +134,3 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(height*3);
 }
-
-
-
-
-//search bar code:
-//
-//     return Container(
-//       padding: EdgeInsets.all(16.0),
-//       child: Row(
-//         children: [
-//           Expanded(
-//             child: TextField(
-//               controller: _searchController,
-//               decoration: InputDecoration(
-//                 hintText: 'Search...',
-//                 border: OutlineInputBorder(),
-//                 contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-//               ),
-//             ),
-//           ),
-//           SizedBox(width: 8.0),
-//           OutlinedButton(
-//             style: OutlinedButton.styleFrom(
-//               primary: buttonColor, // Text color
-//               side: BorderSide(color: buttonColor), // Border color
-//               shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(12.0),
-//               ),
-//             ),
-//             onPressed: () => _performSearch(context),
-//             child: Icon(
-//               Icons.search,
-//               size: 24.0,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
